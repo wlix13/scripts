@@ -1,0 +1,114 @@
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "./access.log",
+    "error": "./error.log",
+    "dnsLog": false
+  },
+  "inbounds": [
+    {
+      "tag": "VLESS TCP REALITY",
+      "listen": "0.0.0.0",
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "tcpSettings": {
+          "acceptProxyProtocol": false,
+          "header": {
+            "type": "none"
+          }
+        },
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "www.samsung.com:443",
+          "xver": 0,
+          "serverNames": ["www.samsung.com", "samsung.com"],
+          "privateKey": "",
+          "shortIds": [""]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic", "fakedns"],
+        "metadataOnly": false,
+        "routeOnly": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "DIRECT",
+      "protocol": "freedom",
+      "settings": {
+        "fragment": {
+          "packets": "tlshello",
+          "length": "100-200",
+          "interval": "10-20"
+        }
+      },
+      "streamSettings": {
+        "sockopt": {
+          "tcpNoDelay": true
+        }
+      }
+    },
+    {
+      "tag": "BLOCK",
+      "protocol": "blackhole",
+      "settings": {}
+    },
+    {
+      "tag": "WARP",
+      "protocol": "freedom",
+      "streamSettings": {
+        "sockopt": {
+          "tcpFastOpen": true,
+          "interface": "warp"
+        }
+      }
+    }
+  ],
+  "policy": {
+    "levels": {
+      "0": {
+        "statsUserDownlink": false,
+        "statsUserUplink": false
+      }
+    },
+    "system": {
+      "statsInboundDownlink": false,
+      "statsInboundUplink": false,
+      "statsOutboundDownlink": false,
+      "statsOutboundUplink": false
+    }
+  },
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "domainMatcher": "hybrid",
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "WARP",
+        "domain": [
+          "geosite:google",
+          "geosite:spotify",
+          "geosite:instagram",
+          "geosite:openai",
+          "geosite:github",
+          "domain:githubcopilot.com",
+          "domain:mangadex.org",
+          "domain:copilot.microsoft.com",
+          "domain:cloudflare.com",
+          "iplocation.net"
+        ]
+      }
+    ]
+  },
+  "stats": {}
+}
