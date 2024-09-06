@@ -1,0 +1,12 @@
+# IDEAs
+.vscode/
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# System files
+.DS_Store
+
+# Virtual Environment
+.env
