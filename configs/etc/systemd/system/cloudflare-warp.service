@@ -1,0 +1,18 @@
+[Unit]
+Description=Cloudflare Warp Tunnel
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/usque nativetun -c /etc/usque/config.json -n warp --ipv6
+ExecStartPost=/etc/usque/warp-v6-policy.sh up warp /etc/usque/config.json
+ExecStopPost=/etc/usque/warp-v6-policy.sh down warp /etc/usque/config.json
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
